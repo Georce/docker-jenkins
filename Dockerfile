@@ -30,7 +30,7 @@ VOLUME /var/jenkins_home
 #  && echo "$JENKINS_SHA /usr/share/jenkins/jenkins.war" | sha1sum -c -
 
 #ENV JENKINS_UC https://updates.jenkins-ci.org
-RUN chown -R root "$JENKINS_HOME" /usr/share/jenkins/ref
+RUN chown -R root:root "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
 #EXPOSE 8080
