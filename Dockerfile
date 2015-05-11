@@ -2,7 +2,7 @@ FROM jenkins:latest
 
 #RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
 
-#ENV JENKINS_HOME /var/jenkins_home
+ENV JENKINS_HOME /var/jenkins_home
 
 # Jenkins is ran with user `jenkins`, uid = 1000
 # If you bind mount a volume from host/vloume from a data container, 
@@ -11,7 +11,7 @@ FROM jenkins:latest
 
 # Jenkins home directoy is a volume, so configuration and build history 
 # can be persisted and survive image upgrades
-#VOLUME /var/jenkins_home
+VOLUME /var/jenkins_home
 
 # `/usr/share/jenkins/ref/` contains all reference configuration we want 
 # to set on a fresh new installation. Use it to bundle additional plugins 
@@ -30,7 +30,7 @@ FROM jenkins:latest
 #  && echo "$JENKINS_SHA /usr/share/jenkins/jenkins.war" | sha1sum -c -
 
 #ENV JENKINS_UC https://updates.jenkins-ci.org
-#RUN chown -R jenkins "$JENKINS_HOME" /usr/share/jenkins/ref
+RUN chown -R root "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
 #EXPOSE 8080
@@ -41,7 +41,7 @@ FROM jenkins:latest
 #ENV COPY_REFERENCE_FILE_LOG /var/log/copy_reference_file.log
 #RUN touch $COPY_REFERENCE_FILE_LOG && chown jenkins.jenkins $COPY_REFERENCE_FILE_LOG
 
-#USER jenkins
+USER root
 
 COPY jenkins.sh /usr/local/bin/jenkins.sh
 ENTRYPOINT ["/usr/local/bin/jenkins.sh"]
