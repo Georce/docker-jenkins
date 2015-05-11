@@ -4,6 +4,10 @@
 # So the initial JENKINS-HOME is set with expected content. 
 # Don't override, as this is just a reference setup, and use from UI 
 # can then change this, upgrade plugins, etc.
+
+curl -XPUT http://$ETCD_HOST:4001/v2/keys/skydns/local/$DOMAIN/"`hostname -s`" \
+-d value='{"host":"'`ip a | grep "scope global eth0" | grep -o '\([0-9]\{1,3\}\.\)\{3\}[0-9]\{1,3\}'`'"}'
+
 copy_reference_file() {
 	f=${1%/} 
 	echo "$f" >> $COPY_REFERENCE_FILE_LOG
