@@ -1,6 +1,6 @@
-FROM jenkins:latest
+FROM java:8u45-jdk
 
-#RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
 
 ENV JENKINS_HOME /var/jenkins_home
 
@@ -16,32 +16,32 @@ VOLUME /var/jenkins_home
 # `/usr/share/jenkins/ref/` contains all reference configuration we want 
 # to set on a fresh new installation. Use it to bundle additional plugins 
 # or config file with your custom jenkins Docker image.
-#RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
+RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
 
 
-#COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
+COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
 
-#ENV JENKINS_VERSION 1.596.2
-#ENV JENKINS_SHA 96ee85602a41d68c164fb54d4796be5d1d9cc5d0
+ENV JENKINS_VERSION 1.596.2
+ENV JENKINS_SHA 96ee85602a41d68c164fb54d4796be5d1d9cc5d0
 
 # could use ADD but this one does not check Last-Modified header 
 # see https://github.com/docker/docker/issues/8331
-#RUN curl -L http://mirrors.jenkins-ci.org/war-stable/$JENKINS_VERSION/jenkins.war -o /usr/share/jenkins/jenkins.war \
-#  && echo "$JENKINS_SHA /usr/share/jenkins/jenkins.war" | sha1sum -c -
+RUN curl -L http://mirrors.jenkins-ci.org/war-stable/$JENKINS_VERSION/jenkins.war -o /usr/share/jenkins/jenkins.war \
+  && echo "$JENKINS_SHA /usr/share/jenkins/jenkins.war" | sha1sum -c -
 
-#ENV JENKINS_UC https://updates.jenkins-ci.org
-RUN chown -R root:root "$JENKINS_HOME" /usr/share/jenkins/ref
+ENV JENKINS_UC https://updates.jenkins-ci.org
+#RUN chown -R root:root "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
-#EXPOSE 8080
+EXPOSE 8080
 
 # will be used by attached slave agents:
-#EXPOSE 50000
+EXPOSE 50000
 
-#ENV COPY_REFERENCE_FILE_LOG /var/log/copy_reference_file.log
-#RUN touch $COPY_REFERENCE_FILE_LOG && chown jenkins.jenkins $COPY_REFERENCE_FILE_LOG
+ENV COPY_REFERENCE_FILE_LOG /var/log/copy_reference_file.log
+RUN touch $COPY_REFERENCE_FILE_LOG
 
-USER root
+#USER root
 
 COPY jenkins.sh /usr/local/bin/jenkins.sh
 ENTRYPOINT ["/usr/local/bin/jenkins.sh"]
