@@ -1,4 +1,4 @@
-FROM index.alauda.cn/dockerlibrary/java:8u45-jdk
+FROM index.alauda.cn/library/java:8u45-jdk
 
 RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
 
