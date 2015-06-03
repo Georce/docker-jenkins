@@ -1,13 +1,11 @@
 #! /bin/bash
 
+set -e
+
 # Copy files from /usr/share/jenkins/ref into /var/jenkins_home
 # So the initial JENKINS-HOME is set with expected content. 
 # Don't override, as this is just a reference setup, and use from UI 
 # can then change this, upgrade plugins, etc.
-
-curl -XPUT http://$ETCD_HOST:4001/v2/keys/skydns/local/$DOMAIN/"`hostname -s`" \
--d value='{"host":"'`ip a | grep "scope global eth0" | grep -o '\([0-9]\{1,3\}\.\)\{3\}[0-9]\{1,3\}'`'"}'
-
 copy_reference_file() {
 	f=${1%/} 
 	echo "$f" >> $COPY_REFERENCE_FILE_LOG
@@ -18,7 +16,9 @@ copy_reference_file() {
 	then
 		echo "copy $rel to JENKINS_HOME" >> $COPY_REFERENCE_FILE_LOG
 		mkdir -p /var/jenkins_home/${dir:23}
-		cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel}; 
+		cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
+		# pin plugins on initial copy
+		[[ ${rel} == plugins/*.jpi ]] && touch /var/jenkins_home/${rel}.pinned
 	fi; 
 }
 export -f copy_reference_file
@@ -32,4 +32,3 @@ fi
 
 # As argument is not jenkins, assume user want to run his own process, for sample a `bash` shell to explore this image
 exec "$@"
-
